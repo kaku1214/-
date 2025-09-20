@@ -1,0 +1,2052 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>篮球鞋推荐系?/title>
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- 引入 Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    
+    <!-- 自定?Tailwind 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FF4D4F',
+                        secondary: '#1890FF',
+                        accent: '#722ED1',
+                        neutral: '#1F2937',
+                        'neutral-light': '#F3F4F6',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                    },
+                },
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .card-hover {
+                transition: all 0.3s ease;
+            }
+            .card-hover:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            }
+            .scrollbar-hide {
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+            .progress-step {
+                transition: all 0.3s ease;
+            }
+            .progress-step.active {
+                background-color: theme('colors.primary');
+                color: white;
+            }
+            .progress-line {
+                transition: background-color 0.3s ease, width 0.5s ease;
+            }
+            .btn-primary {
+                @apply bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5;
+            }
+            .btn-secondary {
+                @apply bg-white text-neutral border border-gray-300 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-all duration-300 shadow-sm hover:shadow;
+            }
+            .input-field {
+                @apply w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-300;
+            }
+            .select-field {
+                @apply w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-300 appearance-none bg-white;
+            }
+            .radio-input {
+                @apply w-4 h-4 text-primary border-gray-300 focus:ring-primary/50;
+            }
+            .checkbox-input {
+                @apply w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary/50;
+            }
+            .step-container {
+                @apply animate-fade-in;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50 font-sans text-neutral">
+    <!-- 顶部导航?-->
+    <header class="sticky top-0 z-50 bg-white shadow-sm transition-all duration-300">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fa fa-basketball-ball text-primary text-2xl"></i>
+                <h1 class="text-xl font-bold text-neutral">篮球鞋推荐系?/h1>
+            </div>
+            <div class="hidden md:flex items-center space-x-6">
+                <button id="lang-zh" class="px-3 py-1 rounded-md bg-primary/10 text-primary font-medium">中文</button>
+                <button id="lang-ja" class="px-3 py-1 rounded-md hover:bg-gray-100 transition-colors">日本?/button>
+                <button id="lang-en" class="px-3 py-1 rounded-md hover:bg-gray-100 transition-colors">English</button>
+            </div>
+            <button class="md:hidden text-neutral text-xl" id="mobile-menu-button">
+                <i class="fa fa-bars"></i>
+            </button>
+        </div>
+        <!-- 移动端菜?-->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+            <div class="container mx-auto px-4 py-2">
+                <div class="flex justify-around py-2">
+                    <button id="mobile-lang-zh" class="px-3 py-1 rounded-md bg-primary/10 text-primary font-medium">中文</button>
+                    <button id="mobile-lang-ja" class="px-3 py-1 rounded-md hover:bg-gray-100 transition-colors">日本?/button>
+                    <button id="mobile-lang-en" class="px-3 py-1 rounded-md hover:bg-gray-100 transition-colors">English</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区?-->
+    <main class="container mx-auto px-4 py-8">
+        <!-- 进度指示?-->
+        <div class="max-w-4xl mx-auto mb-12">
+            <div class="flex justify-between items-center">
+                <div class="flex flex-col items-center">
+                    <div id="step-indicator-1" class="progress-step w-10 h-10 rounded-full flex items-center justify-center bg-primary text-white font-bold shadow-md">1</div>
+                    <span class="text-sm mt-2 text-center" data-i18n="progress_basic">基本信息</span>
+                </div>
+                <div class="flex-1 mx-2">
+                    <div id="progress-line-1-2" class="progress-line h-1 bg-gray-200 rounded"></div>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div id="step-indicator-2" class="progress-step w-10 h-10 rounded-full flex items-center justify-center bg-gray-200 text-gray-500 font-bold shadow-sm">2</div>
+                    <span class="text-sm mt-2 text-center" data-i18n="progress_experience">篮球经验</span>
+                </div>
+                <div class="flex-1 mx-2">
+                    <div id="progress-line-2-3" class="progress-line h-1 bg-gray-200 rounded"></div>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div id="step-indicator-3" class="progress-step w-10 h-10 rounded-full flex items-center justify-center bg-gray-200 text-gray-500 font-bold shadow-sm">3</div>
+                    <span class="text-sm mt-2 text-center" data-i18n="progress_preferences">球鞋偏好</span>
+                </div>
+                <div class="flex-1 mx-2">
+                    <div id="progress-line-3-4" class="progress-line h-1 bg-gray-200 rounded"></div>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div id="step-indicator-4" class="progress-step w-10 h-10 rounded-full flex items-center justify-center bg-gray-200 text-gray-500 font-bold shadow-sm">4</div>
+                    <span class="text-sm mt-2 text-center" data-i18n="progress_results">推荐结果</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 步骤容器 -->
+        <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden">
+            <!-- 步骤1: 基本信息 -->
+            <div id="step-1" class="step-container p-6 md:p-10">
+                <div class="text-center mb-10">
+                    <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-neutral mb-3" data-i18n="welcome">欢迎使用篮球鞋推荐系统！</h2>
+                    <p class="text-gray-600 text-lg" data-i18n="welcome_subtitle">我们将通过一系列问题为您找到最适合的篮球鞋?/p>
+                </div>
+                
+                <h3 class="text-xl font-bold mb-6 flex items-center" data-i18n="physical_info">
+                    <i class="fa fa-user-circle text-primary mr-2"></i>
+                    基本身体信息
+                </h3>
+                
+                <form id="basic-info-form" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="height" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="height">您的身高是多少厘米？</label>
+                            <div class="relative">
+                                <input type="number" id="height" name="height" class="input-field pl-10" placeholder="例如: 180" required>
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                                    <i class="fa fa-arrows-v"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="weight" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="weight">您的体重是多少公斤？</label>
+                            <div class="relative">
+                                <input type="number" id="weight" name="weight" class="input-field pl-10" placeholder="例如: 70" required>
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                                    <i class="fa fa-balance-scale"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="arm_span" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="arm_span">您的臂展是多少厘米？</label>
+                        <div class="relative">
+                            <input type="number" id="arm_span" name="arm_span" class="input-field pl-10" placeholder="例如: 185" required>
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                                <i class="fa fa-arrows-h"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="foot_type" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="foot_type">您的脚型属于?/label>
+                        <select id="foot_type" name="foot_type" class="select-field" required>
+                            <option value="" disabled selected></option>
+                            <option value="正常脚型" data-i18n-option="normal_foot">正常脚型</option>
+                            <option value="高足? data-i18n-option="high_arch">高足?/option>
+                            <option value="扁平? data-i18n-option="flat_foot">扁平?/option>
+                            <option value="宽脚" data-i18n-option="wide_foot">宽脚</option>
+                            <option value="无所? data-i18n-option="no_preference">无所?/option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="favorite_player" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="favorite_player">您最喜欢的篮球明星是?/label>
+                        <select id="favorite_player" name="favorite_player" class="select-field" required>
+                            <option value="" disabled selected></option>
+                            <option value="迈克尔·乔? data-i18n-option="michael_jordan">迈克尔·乔?/option>
+                            <option value="勒布朗·詹姆斯" data-i18n-option="lebron_james">勒布朗·詹姆斯</option>
+                            <option value="科比·布莱恩特" data-i18n-option="kobe_bryant">科比·布莱恩特</option>
+                            <option value="斯蒂芬·库? data-i18n-option="stephen_curry">斯蒂芬·库?/option>
+                            <option value="凯文·杜兰? data-i18n-option="kevin_durant">凯文·杜兰?/option>
+                            <option value="詹姆斯·哈? data-i18n-option="james_harden">詹姆斯·哈?/option>
+                            <option value="达米安·利拉德" data-i18n-option="damian_lillard">达米安·利拉德</option>
+                            <option value="姚明" data-i18n-option="yao_ming">姚明</option>
+                            <option value="林书? data-i18n-option="jeremy_lin">林书?/option>
+                            <option value="其他" data-i18n-option="other">其他</option>
+                            <option value="不清?不知? data-i18n-option="not_sure">不清?不知?/option>
+                        </select>
+                        <div id="other_player_container" class="hidden mt-3">
+                            <input type="text" id="other_player" name="other_player" class="input-field" placeholder="请输入其他球员名?>
+                        </div>
+                    </div>
+                </form>
+                
+                <div class="mt-10 flex justify-end">
+                    <button id="next-step-1" class="btn-primary">
+                        <span data-i18n="next">下一?/span>
+                        <i class="fa fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 步骤2: 篮球经验 -->
+            <div id="step-2" class="step-container p-6 md:p-10 hidden">
+                <h3 class="text-xl font-bold mb-6 flex items-center" data-i18n="is_beginner">
+                    <i class="fa fa-question-circle text-primary mr-2"></i>
+                    您是篮球新手吗？(打篮球不??
+                </h3>
+                
+                <div class="space-y-4 mb-8">
+                    <div class="flex items-center space-x-3">
+                        <input type="radio" id="beginner-yes" name="is_beginner" value="true" class="radio-input" checked>
+                        <label for="beginner-yes" class="text-base font-medium text-gray-700 flex items-center" data-i18n="yes">
+                            <i class="fa fa-check-circle text-green-500 mr-2"></i>
+                            ?
+                        </label>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <input type="radio" id="beginner-no" name="is_beginner" value="false" class="radio-input">
+                        <label for="beginner-no" class="text-base font-medium text-gray-700 flex items-center" data-i18n="no">
+                            <i class="fa fa-times-circle text-red-500 mr-2"></i>
+                            ?
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 新手问题 -->
+                <div id="beginner-questions" class="space-y-6">
+                    <h4 class="text-lg font-semibold mb-4" data-i18n="beginner_questions">篮球偏好</h4>
+                    
+                    <div>
+                        <label for="desired_position" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="desired_position">1. 您希望将来主要打什么位置？</label>
+                        <select id="desired_position" name="desired_position" class="select-field">
+                            <option value="" disabled selected></option>
+                            <option value="控球后卫" data-i18n-option="point_guard">控球后卫</option>
+                            <option value="得分后卫" data-i18n-option="shooting_guard">得分后卫</option>
+                            <option value="小前? data-i18n-option="small_forward">小前?/option>
+                            <option value="大前? data-i18n-option="power_forward">大前?/option>
+                            <option value="中锋" data-i18n-option="center">中锋</option>
+                            <option value="不清?不知? data-i18n-option="not_sure">不清?不知?/option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="admire_style" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="admire_style">2. 您最欣赏哪种打球风格?/label>
+                        <select id="admire_style" name="admire_style" class="select-field">
+                            <option value="" disabled selected></option>
+                            <option value="快速突破和扣篮" data-i18n-option="fast_breaks">快速突破和扣篮</option>
+                            <option value="精准投篮" data-i18n-option="accurate_shooting">精准投篮</option>
+                            <option value="出色的传球和组织" data-i18n-option="excellent_passing">出色的传球和组织</option>
+                            <option value="强硬的防? data-i18n-option="tough_defense">强硬的防?/option>
+                            <option value="全面均衡的表? data-i18n-option="well_rounded">全面均衡的表?/option>
+                            <option value="不清?不知? data-i18n-option="not_sure">不清?不知?/option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="scoring_desire" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="scoring_desire">3. 您希望自己在进攻端的表现是？</label>
+                        <select id="scoring_desire" name="scoring_desire" class="select-field">
+                            <option value="" disabled selected></option>
+                            <option value="成为主要得分? data-i18n-option="primary_scorer">成为主要得分?/option>
+                            <option value="偶尔得分，主要配? data-i18n-option="occasional_scorer">偶尔得分，主要配?/option>
+                            <option value="还不确定，先学习基础" data-i18n-option="learn_basics">还不确定，先学习基础</option>
+                            <option value="不清?不知? data-i18n-option="not_sure">不清?不知?/option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="defense_interest" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="defense_interest">4. 您对防守的态度是？</label>
+                        <select id="defense_interest" name="defense_interest" class="select-field">
+                            <option value="" disabled selected></option>
+                            <option value="非常重要，想成为防守高手" data-i18n-option="defense_expert">非常重要，想成为防守高手</option>
+                            <option value="一般，会尽力但不是重点" data-i18n-option="average_defense">一般，会尽力但不是重点</option>
+                            <option value="不太感兴趣，更关注进? data-i18n-option="offense_focused">不太感兴趣，更关注进?/option>
+                            <option value="不清?不知? data-i18n-option="not_sure">不清?不知?/option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="team_play" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="team_play">5. 您更倾向于？</label>
+                        <select id="team_play" name="team_play" class="select-field">
+                            <option value="" disabled selected></option>
+                            <option value="团队配合，分享球? data-i18n-option="team_oriented">团队配合，分享球?/option>
+                            <option value="个人表现，承担责? data-i18n-option="individual_oriented">个人表现，承担责?/option>
+                            <option value="不清?不知? data-i18n-option="not_sure">不清?不知?/option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="playing_frequency" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="playing_frequency">6. 您计划每周打几次篮球?/label>
+                        <select id="playing_frequency" name="playing_frequency" class="select-field">
+                            <option value="" disabled selected></option>
+                            <option value="每周1-2? data-i18n-option="1_2_times">每周1-2?/option>
+                            <option value="每周3-4? data-i18n-option="3_4_times">每周3-4?/option>
+                            <option value="视情况而定" data-i18n-option="depends">视情况而定</option>
+                            <option value="不清?不知? data-i18n-option="not_sure">不清?不知?/option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="basketball_goal" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="basketball_goal">7. 您打篮球的目标是?/label>
+                        <select id="basketball_goal" name="basketball_goal" class="select-field">
+                            <option value="" disabled selected></option>
+                            <option value="锻炼身体，娱乐消? data-i18n-option="exercise_entertainment">锻炼身体，娱乐消?/option>
+                            <option value="加入校队或俱乐部" data-i18n-option="join_team">加入校队或俱乐部</option>
+                            <option value="提高技术，享受比赛" data-i18n-option="improve_skills">提高技术，享受比赛</option>
+                            <option value="成为专业球员" data-i18n-option="professional_player">成为专业球员</option>
+                            <option value="不清?不知? data-i18n-option="not_sure">不清?不知?/option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 非新手问?-->
+                <div id="non-beginner-questions" class="space-y-6 hidden">
+                    <h4 class="text-lg font-semibold mb-4" data-i18n="non_beginner_questions">篮球经验与风?/h4>
+                    
+                    <div>
+                        <label for="playing_position" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="playing_position">1. 您主要打什么位置？</label>
+                        <select id="playing_position" name="playing_position" class="select-field">
+                            <option value="" disabled selected></option>
+                            <option value="控球后卫" data-i18n-option="point_guard">控球后卫</option>
+                            <option value="得分后卫" data-i18n-option="shooting_guard">得分后卫</option>
+                            <option value="小前? data-i18n-option="small_forward">小前?/option>
+                            <option value="大前? data-i18n-option="power_forward">大前?/option>
+                            <option value="中锋" data-i18n-option="center">中锋</option>
+                            <option value="不清?不知? data-i18n-option="not_sure">不清?不知?/option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="offensive_strength" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="offensive_strength">2. 您最擅长的进攻方式是?/label>
+                        <select id="offensive_strength" name="offensive_strength" class="select-field">
+                            <option value="" disabled selected></option>
+                            <option value="外线投篮（三分、中投）" data-i18n-option="perimeter_shooting">外线投篮（三分、中投）</option>
+                            <option value="突破上篮/扣篮" data-i18n-option="drives_dunks">突破上篮/扣篮</option>
+                            <option value="背身单打" data-i18n-option="post_play">背身单打</option>
+                            <option value="组织传球" data-i18n-option="passing_playmaking">组织传球</option>
+                            <option value="无球跑动和空? data-i18n-option="off_ball">无球跑动和空?/option>
+                            <option value="不清?不知? data-i18n-option="not_sure">不清?不知?/option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="defensive_strength" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="defensive_strength">3. 您最擅长的防守方式是?/label>
+                        <select id="defensive_strength" name="defensive_strength" class="select-field">
+                            <option value="" disabled selected></option>
+                            <option value="贴身防守和抢? data-i18n-option="on_ball_defense">贴身防守和抢?/option>
+                            <option value="盖帽和篮? data-i18n-option="blocking_rebounding">盖帽和篮?/option>
+                            <option value="团队防守和协? data-i18n-option="team_defense">团队防守和协?/option>
+                            <option value="防守意识和预? data-i18n-option="defensive_awareness">防守意识和预?/option>
+                            <option value="全场紧? data-i18n-option="full_court_pressure">全场紧?/option>
+                            <option value="不清?不知? data-i18n-option="not_sure">不清?不知?/option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="play_style" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="play_style">4. 您的打球风格更偏向于?/label>
+                        <select id="play_style" name="play_style" class="select-field">
+                            <option value="" disabled selected></option>
+                            <option value="快节奏进? data-i18n-option="fast_paced">快节奏进?/option>
+                            <option value="半场阵地? data-i18n-option="half_court">半场阵地?/option>
+                            <option value="身体对抗? data-i18n-option="physical_play">身体对抗?/option>
+                            <option value="技巧型打法" data-i18n-option="skillful_play">技巧型打法</option>
+                            <option value="团队配合? data-i18n-option="team_play_style">团队配合?/option>
+                            <option value="不清?不知? data-i18n-option="not_sure">不清?不知?/option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="court_role" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="court_role">5. 您在球队中通常扮演什么角色？</label>
+                        <select id="court_role" name="court_role" class="select-field">
+                            <option value="" disabled selected></option>
+                            <option value="主要得分? data-i18n-option="primary_scorer_role">主要得分?/option>
+                            <option value="组织?控球? data-i18n-option="playmaker">组织?控球?/option>
+                            <option value="防守核心" data-i18n-option="defensive_anchor">防守核心</option>
+                            <option value="角色球员/蓝领" data-i18n-option="role_player">角色球员/蓝领</option>
+                            <option value="全能型球? data-i18n-option="all_around">全能型球?/option>
+                            <option value="不清?不知? data-i18n-option="not_sure">不清?不知?/option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="frequency" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="frequency">6. 您每周打篮球的频率是?/label>
+                        <select id="frequency" name="frequency" class="select-field">
+                            <option value="" disabled selected></option>
+                            <option value="1-2? data-i18n-option="1_2_times_week">1-2?/option>
+                            <option value="3-4? data-i18n-option="3_4_times_week">3-4?/option>
+                            <option value="5-6? data-i18n-option="5_6_times_week">5-6?/option>
+                            <option value="几乎每天" data-i18n-option="almost_daily">几乎每天</option>
+                            <option value="不清?不知? data-i18n-option="not_sure">不清?不知?/option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="improvement_area" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="improvement_area">7. 您希望在哪个方面提高自己的表现？</label>
+                        <select id="improvement_area" name="improvement_area" class="select-field">
+                            <option value="" disabled selected></option>
+                            <option value="投篮准确? data-i18n-option="shooting_accuracy">投篮准确?/option>
+                            <option value="控球和突? data-i18n-option="dribbling_driving">控球和突?/option>
+                            <option value="防守能力" data-i18n-option="defensive_ability">防守能力</option>
+                            <option value="速度和爆发力" data-i18n-option="speed_explosiveness">速度和爆发力</option>
+                            <option value="篮球智商和决? data-i18n-option="basketball_iq">篮球智商和决?/option>
+                            <option value="不清?不知? data-i18n-option="not_sure">不清?不知?/option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mt-10 flex justify-between">
+                    <button id="prev-step-2" class="btn-secondary">
+                        <i class="fa fa-arrow-left mr-2"></i>
+                        <span data-i18n="previous">上一?/span>
+                    </button>
+                    <button id="next-step-2" class="btn-primary">
+                        <span data-i18n="next">下一?/span>
+                        <i class="fa fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 步骤3: 球鞋偏好 -->
+            <div id="step-3" class="step-container p-6 md:p-10 hidden">
+                <h3 class="text-xl font-bold mb-6 flex items-center" data-i18n="shoe_preferences">
+                    <i class="fa fa-shoe-prints text-primary mr-2"></i>
+                    球鞋偏好
+                </h3>
+                
+                <form id="shoe-preferences-form" class="space-y-6">
+                    <div>
+                        <label for="court_type" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="court_type">1. 您主要在什么场地打球？</label>
+                        <select id="court_type" name="court_type" class="select-field" required>
+                            <option value="" disabled selected></option>
+                            <option value="室内木地? data-i18n-option="indoor_court">室内木地?/option>
+                            <option value="室外水泥? data-i18n-option="outdoor_court">室外水泥?/option>
+                            <option value="两者皆? data-i18n-option="both_courts">两者皆?/option>
+                            <option value="不清?不知? data-i18n-option="not_sure">不清?不知?/option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="price_range" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="price_range">2. 请输入您的预算范围（元，用逗号分隔，如500,1500?/label>
+                        <div class="relative">
+                            <input type="text" id="price_range" name="price_range" class="input-field pl-10" placeholder="500,1500 ?0表示无预算限?>
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                                <i class="fa fa-yuan"></i>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1" data-i18n="price_note">如果没有明确预算，请输入0表示无预算限?/p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1" data-i18n="shoe_features">3. 选择您最看重的球鞋特性（可多选）:</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="feature-1" name="shoe_features" value="缓震性能" class="checkbox-input">
+                                <label for="feature-1" class="text-base font-medium text-gray-700" data-i18n-option="cushioning">缓震性能</label>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="feature-2" name="shoe_features" value="支撑稳定? class="checkbox-input">
+                                <label for="feature-2" class="text-base font-medium text-gray-700" data-i18n-option="support_stability">支撑稳定?/label>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="feature-3" name="shoe_features" value="轻便灵活? class="checkbox-input">
+                                <label for="feature-3" class="text-base font-medium text-gray-700" data-i18n-option="lightweight_flexibility">轻便灵活?/label>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="feature-4" name="shoe_features" value="耐磨耐用? class="checkbox-input">
+                                <label for="feature-4" class="text-base font-medium text-gray-700" data-i18n-option="durability">耐磨耐用?/label>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="feature-5" name="shoe_features" value="抓地? class="checkbox-input">
+                                <label for="feature-5" class="text-base font-medium text-gray-700" data-i18n-option="traction">抓地?/label>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="feature-6" name="shoe_features" value="透气? class="checkbox-input">
+                                <label for="feature-6" class="text-base font-medium text-gray-700" data-i18n-option="breathability">透气?/label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="shoe_brand" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="shoe_brand">4. 您有偏好的品牌吗?/label>
+                        <select id="shoe_brand" name="shoe_brand" class="select-field">
+                            <option value="" disabled selected></option>
+                            <option value="耐克/Nike" data-i18n-option="nike">耐克/Nike</option>
+                            <option value="阿迪达斯/Adidas" data-i18n-option="adidas">阿迪达斯/Adidas</option>
+                            <option value="乔丹/Air Jordan" data-i18n-option="jordan">乔丹/Air Jordan</option>
+                            <option value="安德?Under Armour" data-i18n-option="under_armour">安德?Under Armour</option>
+                            <option value="匹克" data-i18n-option="peak">匹克</option>
+                            <option value="李宁" data-i18n-option="li_ning">李宁</option>
+                            <option value="无所? data-i18n-option="no_preference">无所?/option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="shoe_weight" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="shoe_weight">5. 您对球鞋重量的偏好是?/label>
+                        <select id="shoe_weight" name="shoe_weight" class="select-field">
+                            <option value="" disabled selected></option>
+                            <option value="非常轻便" data-i18n-option="very_lightweight">非常轻便</option>
+                            <option value="中等重量" data-i18n-option="medium_weight">中等重量</option>
+                            <option value="偏厚重（更稳定）" data-i18n-option="slightly_heavy">偏厚重（更稳定）</option>
+                            <option value="无所? data-i18n-option="no_preference">无所?/option>
+                        </select>
+                    </div>
+                </form>
+                
+                <div class="mt-10 flex justify-between">
+                    <button id="prev-step-3" class="btn-secondary">
+                        <i class="fa fa-arrow-left mr-2"></i>
+                        <span data-i18n="previous">上一?/span>
+                    </button>
+                    <button id="next-step-3" class="btn-primary">
+                        <span data-i18n="get_recommendations">获取推荐</span>
+                        <i class="fa fa-search ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 步骤4: 推荐结果 -->
+            <div id="step-4" class="step-container p-6 md:p-10 hidden">
+                <!-- 风格分析 -->
+                <div class="mb-10">
+                    <h3 class="text-xl font-bold mb-6 flex items-center" data-i18n="style_analysis">
+                        <i class="fa fa-chart-line text-primary mr-2"></i>
+                        您的篮球风格分析
+                    </h3>
+                    
+                    <div class="bg-neutral-light rounded-xl p-6 mb-6">
+                        <div class="flex flex-col md:flex-row items-center md:items-start">
+                            <div class="w-full md:w-1/2 mb-6 md:mb-0 md:pr-6">
+                                <div class="text-center md:text-left">
+                                    <h4 class="text-lg font-semibold mb-2" data-i18n="primary_style">主要篮球风格</h4>
+                                    <p id="primary-style-result" class="text-2xl font-bold text-primary">全能均衡?/p>
+                                </div>
+                            </div>
+                            <div class="w-full md:w-1/2">
+                                <div class="h-64">
+                                    <canvas id="style-chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 推荐结果 -->
+                <div>
+                    <h3 class="text-xl font-bold mb-6 flex items-center" data-i18n="recommendations">
+                        <i class="fa fa-star text-primary mr-2"></i>
+                        为您推荐的篮球鞋
+                    </h3>
+                    
+                    <p class="text-sm text-gray-500 mb-6" data-i18n="official_price_note">价格均以官方网站为准（二级平台购入更加划算）</p>
+                    
+                    <div id="no-perfect-match" class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 hidden">
+                        <p class="text-yellow-700" data-i18n="no_perfect_match">没有找到完全匹配的鞋子，以下是最接近您需求的选项?/p>
+                    </div>
+                    
+                    <div id="recommendations-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- 推荐的球鞋将在这里动态生?-->
+                    </div>
+                </div>
+                
+                <div class="mt-10 flex justify-between">
+                    <button id="prev-step-4" class="btn-secondary">
+                        <i class="fa fa-arrow-left mr-2"></i>
+                        <span data-i18n="previous">上一?/span>
+                    </button>
+                    <button id="restart" class="btn-primary">
+                        <i class="fa fa-refresh mr-2"></i>
+                        <span data-i18n="restart">重新开?/span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-neutral text-white py-8 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa fa-basketball-ball text-primary text-xl"></i>
+                        <h2 class="text-xl font-bold">篮球鞋推荐系?/h2>
+                    </div>
+                    <p class="text-gray-400 text-sm mt-2" data-i18n="footer_description">为每位篮球爱好者找到最合适的球鞋</p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fa fa-facebook-square text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fa fa-twitter-square text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fa fa-instagram text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fa fa-youtube-play text-xl"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-6 pt-6 text-center text-gray-400 text-sm">
+                <p data-i18n="copyright">© 2023 篮球鞋推荐系? 保留所有权利?/p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 球鞋详情模态框 -->
+    <div id="shoe-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 id="modal-title" class="text-xl font-bold" data-i18n="shoe_details">球鞋详情</h3>
+                    <button id="close-modal" class="text-gray-500 hover:text-gray-700">
+                        <i class="fa fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <div id="modal-content" class="space-y-4">
+                    <!-- 模态框内容将在这里动态生?-->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // 存储用户答案
+        let userAnswers = {};
+        let currentLang = 'zh';
+        let styleChart = null;
+        
+        // 翻译文本数据
+        const translations = {
+            "zh": {
+                "welcome": "欢迎使用篮球鞋推荐系统！",
+                "welcome_subtitle": "我们将通过一系列问题为您找到最适合的篮球鞋?,
+                "physical_info": "基本身体信息",
+                "height": "您的身高是多少厘米？",
+                "weight": "您的体重是多少公斤？",
+                "arm_span": "您的臂展是多少厘米？",
+                "foot_type": "您的脚型属于?,
+                "favorite_player": "您最喜欢的篮球明星是?,
+                "is_beginner": "您是篮球新手吗？(打篮球不??",
+                "yes": "?,
+                "no": "?,
+                "beginner_questions": "篮球偏好",
+                "desired_position": "1. 您希望将来主要打什么位置？",
+                "admire_style": "2. 您最欣赏哪种打球风格?,
+                "scoring_desire": "3. 您希望自己在进攻端的表现是？",
+                "defense_interest": "4. 您对防守的态度是？",
+                "team_play": "5. 您更倾向于？",
+                "playing_frequency": "6. 您计划每周打几次篮球?,
+                "basketball_goal": "7. 您打篮球的目标是?,
+                "non_beginner_questions": "篮球经验与风?,
+                "playing_position": "1. 您主要打什么位置？",
+                "offensive_strength": "2. 您最擅长的进攻方式是?,
+                "defensive_strength": "3. 您最擅长的防守方式是?,
+                "play_style": "4. 您的打球风格更偏向于?,
+                "court_role": "5. 您在球队中通常扮演什么角色？",
+                "frequency": "6. 您每周打篮球的频率是?,
+                "improvement_area": "7. 您希望在哪个方面提高自己的表现？",
+                "shoe_preferences": "球鞋偏好",
+                "court_type": "1. 您主要在什么场地打球？",
+                "price_range": "2. 请输入您的预算范围（元，用逗号分隔，如500,1500?,
+                "price_note": "如果没有明确预算，请输入0表示无预算限?,
+                "shoe_features": "3. 选择您最看重的球鞋特性（可多选）:",
+                "shoe_brand": "4. 您有偏好的品牌吗?,
+                "shoe_weight": "5. 您对球鞋重量的偏好是?,
+                "style_analysis": "您的篮球风格分析",
+                "recommendations": "为您推荐的篮球鞋",
+                "official_price_note": "价格均以官方网站为准（二级平台购入更加划算）",
+                "no_perfect_match": "没有找到完全匹配的鞋子，以下是最接近您需求的选项?,
+                "mismatch_details": "不匹配细节：",
+                "shoe_details": "球鞋详情",
+                "purchase_link": "购买链接: ",
+                "style_score": "风格匹配?,
+                "next": "下一?,
+                "previous": "上一?,
+                "get_recommendations": "获取推荐",
+                "restart": "重新开?,
+                "progress_basic": "基本信息",
+                "progress_experience": "篮球经验",
+                "progress_preferences": "球鞋偏好",
+                "progress_results": "推荐结果",
+                "primary_style": "主要篮球风格",
+                "footer_description": "为每位篮球爱好者找到最合适的球鞋",
+                "copyright": "© 2023 篮球鞋推荐系? 保留所有权利?
+            },
+            "ja": {
+                "welcome": "バスケットボールシューズ推薦システムへようこそ！",
+                "welcome_subtitle": "一連の質問を通じて最適なシューズを推薦します?,
+                "physical_info": "基本的な身体情報",
+                "height": "身長は何cmですか？",
+                "weight": "体重は何kgですか？",
+                "arm_span": "アームスパンは何cmですか？",
+                "foot_type": "足のタイプはどれですか？",
+                "favorite_player": "一番好きなバスケットボール選手は誰ですか？",
+                "is_beginner": "バスケットボールの初心者ですか?1年未満の経?",
+                "yes": "はい",
+                "no": "いい?,
+                "beginner_questions": "バスケットボールの好?,
+                "desired_position": "1. 将来主にどのポジションでプレイしたいですか？",
+                "admire_style": "2. どのようなプレイスタイルが最も気に入っていますか?,
+                "scoring_desire": "3. 攻撃面での自分の表現をどのようにしたいですか?,
+                "defense_interest": "4. 防御に対する態度はどうですか?,
+                "team_play": "5. どちらに傾倒していますか？",
+                "playing_frequency": "6. 週に何回バスケットボールをする予定ですか?,
+                "basketball_goal": "7. バスケットボールをする目標は何ですか?,
+                "non_beginner_questions": "バスケットボールの経験とスタイル",
+                "playing_position": "1. 主にどのポジションでプレイしますか？",
+                "offensive_strength": "2. 最も得意な攻撃方法は何ですか？",
+                "defensive_strength": "3. 最も得意な防御方法は何ですか？",
+                "play_style": "4. プレイスタイルはどちらに偏りますか？",
+                "court_role": "5. チームでは通常どのような役割を担っていますか？",
+                "frequency": "6. 週に何回バスケットボールをしますか？",
+                "improvement_area": "7. どの分野で自分の実力を向上させたいですか?,
+                "shoe_preferences": "シューズの好?,
+                "court_type": "1. 主にどのような場所でプレイしますか?,
+                "price_range": "2. 予算範囲を入力してください（円、カンマ区切り、例:5000,15000?,
+                "price_note": "明確な予算がない場合?を入力してくださ?,
+                "shoe_features": "3. 最も重視するシューズの特性を選択してください（複数選択可?",
+                "shoe_brand": "4. 偏好するブランドはありますか?,
+                "shoe_weight": "5. シューズの重量についての偏好は何ですか？",
+                "style_analysis": "あなたのバスケットボールスタイル分析",
+                "recommendations": "推薦されるバスケットボールシュー?,
+                "official_price_note": "価格はすべて公式サイトを基準とします（セカンダリープラットフォームでの購入の方がお得です）",
+                "no_perfect_match": "完全に一致するシューズは見つかりませんでした。以下は最も近いオプションです?,
+                "mismatch_details": "不一致の詳細?,
+                "shoe_details": "シューズの詳?,
+                "purchase_link": "購入リン? ",
+                "style_score": "スタイル一致度",
+                "next": "次へ",
+                "previous": "前へ",
+                "get_recommendations": "推薦を取?,
+                "restart": "やり直し",
+                "progress_basic": "基本情報",
+                "progress_experience": "経験",
+                "progress_preferences": "偏好",
+                "progress_results": "結果",
+                "primary_style": "主なプレイスタイ?,
+                "footer_description": "すべてのバスケットボール愛好者に最適なシューズ?,
+                "copyright": "© 2023 バスケットボールシューズ推薦システム. 全著作権所有?
+            },
+            "en": {
+                "welcome": "Welcome to the Basketball Shoes Recommendation System!",
+                "welcome_subtitle": "We'll find the best shoes for you through a series of questions.",
+                "physical_info": "Basic Physical Information",
+                "height": "What is your height in centimeters?",
+                "weight": "What is your weight in kilograms?",
+                "arm_span": "What is your arm span in centimeters?",
+                "foot_type": "What is your foot type?",
+                "favorite_player": "Who is your favorite basketball player?",
+                "is_beginner": "Are you new to basketball? (Less than 1 year experience)",
+                "yes": "Yes",
+                "no": "No",
+                "beginner_questions": "Basketball Preferences",
+                "desired_position": "1. What position do you want to mainly play in the future?",
+                "admire_style": "2. What playing style do you admire the most?",
+                "scoring_desire": "3. How do you want to perform on the offensive end?",
+                "defense_interest": "4. What is your attitude towards defense?",
+                "team_play": "5. You prefer to?",
+                "playing_frequency": "6. How often do you plan to play basketball per week?",
+                "basketball_goal": "7. What is your goal in playing basketball?",
+                "non_beginner_questions": "Basketball Experience and Style",
+                "playing_position": "1. What position do you mainly play?",
+                "offensive_strength": "2. What is your strongest offensive move?",
+                "defensive_strength": "3. What is your strongest defensive skill?",
+                "play_style": "4. Your playing style is more towards?",
+                "court_role": "5. What role do you usually play on your team?",
+                "frequency": "6. How often do you play basketball per week?",
+                "improvement_area": "7. In which area do you want to improve your performance?",
+                "shoe_preferences": "Shoe Preferences",
+                "court_type": "1. Where do you mainly play?",
+                "price_range": "2. Please enter your price range (currency, comma separated, e.g.500,1500)",
+                "price_note": "If you have no specific budget, enter 0",
+                "shoe_features": "3. Select the shoe features you value most (multiple choices):",
+                "shoe_brand": "4. Do you have a preferred brand?",
+                "shoe_weight": "5. What is your preference regarding shoe weight?",
+                "style_analysis": "Your Basketball Style Analysis",
+                "recommendations": "Recommended Basketball Shoes",
+                "official_price_note": "Prices are based on official websites (purchasing from secondary platforms is more cost-effective)",
+                "no_perfect_match": "No perfect match found. Here are the closest options to your needs:",
+                "mismatch_details": "Mismatch details:",
+                "shoe_details": "Shoe details",
+                "purchase_link": "Purchase link: ",
+                "style_score": "Style match score",
+                "next": "Next",
+                "previous": "Previous",
+                "get_recommendations": "Get Recommendations",
+                "restart": "Restart",
+                "progress_basic": "Basic Info",
+                "progress_experience": "Experience",
+                "progress_preferences": "Preferences",
+                "progress_results": "Results",
+                "primary_style": "Primary Play Style",
+                "footer_description": "Finding the perfect shoes for every basketball enthusiast",
+                "copyright": "© 2023 Basketball Shoes Recommendation System. All rights reserved."
+            }
+        };
+        
+        // 选项翻译
+        const optionTranslations = {
+            "zh": {
+                "normal_foot": "正常脚型",
+                "high_arch": "高足?,
+                "flat_foot": "扁平?,
+                "wide_foot": "宽脚",
+                "no_preference": "无所?,
+                "not_sure": "不清?不知?,
+                "other": "其他",
+                "michael_jordan": "迈克尔·乔?,
+                "lebron_james": "勒布朗·詹姆斯",
+                "kobe_bryant": "科比·布莱恩特",
+                "stephen_curry": "斯蒂芬·库?,
+                "kevin_durant": "凯文·杜兰?,
+                "james_harden": "詹姆斯·哈?,
+                "damian_lillard": "达米安·利拉德",
+                "yao_ming": "姚明",
+                "jeremy_lin": "林书?,
+                "point_guard": "控球后卫",
+                "shooting_guard": "得分后卫",
+                "small_forward": "小前?,
+                "power_forward": "大前?,
+                "center": "中锋",
+                "fast_breaks": "快速突破和扣篮",
+                "accurate_shooting": "精准投篮",
+                "excellent_passing": "出色的传球和组织",
+                "tough_defense": "强硬的防?,
+                "well_rounded": "全面均衡的表?,
+                "primary_scorer": "成为主要得分?,
+                "occasional_scorer": "偶尔得分，主要配?,
+                "learn_basics": "还不确定，先学习基础",
+                "defense_expert": "非常重要，想成为防守高手",
+                "average_defense": "一般，会尽力但不是重点",
+                "offense_focused": "不太感兴趣，更关注进?,
+                "team_oriented": "团队配合，分享球?,
+                "individual_oriented": "个人表现，承担责?,
+                "1_2_times": "每周1-2?,
+                "3_4_times": "每周3-4?,
+                "depends": "视情况而定",
+                "exercise_entertainment": "锻炼身体，娱乐消?,
+                "join_team": "加入校队或俱乐部",
+                "improve_skills": "提高技术，享受比赛",
+                "professional_player": "成为专业球员",
+                "perimeter_shooting": "外线投篮（三分、中投）",
+                "drives_dunks": "突破上篮/扣篮",
+                "post_play": "背身单打",
+                "passing_playmaking": "组织传球",
+                "off_ball": "无球跑动和空?,
+                "on_ball_defense": "贴身防守和抢?,
+                "blocking_rebounding": "盖帽和篮?,
+                "team_defense": "团队防守和协?,
+                "defensive_awareness": "防守意识和预?,
+                "full_court_pressure": "全场紧?,
+                "fast_paced": "快节奏进?,
+                "half_court": "半场阵地?,
+                "physical_play": "身体对抗?,
+                "skillful_play": "技巧型打法",
+                "team_play_style": "团队配合?,
+                "primary_scorer_role": "主要得分?,
+                "playmaker": "组织?控球?,
+                "defensive_anchor": "防守核心",
+                "role_player": "角色球员/蓝领",
+                "all_around": "全能型球?,
+                "1_2_times_week": "1-2?,
+                "3_4_times_week": "3-4?,
+                "5_6_times_week": "5-6?,
+                "almost_daily": "几乎每天",
+                "shooting_accuracy": "投篮准确?,
+                "dribbling_driving": "控球和突?,
+                "defensive_ability": "防守能力",
+                "speed_explosiveness": "速度和爆发力",
+                "basketball_iq": "篮球智商和决?,
+                "indoor_court": "室内木地?,
+                "outdoor_court": "室外水泥?,
+                "both_courts": "两者皆?,
+                "cushioning": "缓震性能",
+                "support_stability": "支撑稳定?,
+                "lightweight_flexibility": "轻便灵活?,
+                "durability": "耐磨耐用?,
+                "traction": "抓地?,
+                "breathability": "透气?,
+                "nike": "耐克/Nike",
+                "adidas": "阿迪达斯/Adidas",
+                "jordan": "乔丹/Air Jordan",
+                "under_armour": "安德?Under Armour",
+                "peak": "匹克",
+                "li_ning": "李宁",
+                "very_lightweight": "非常轻便",
+                "medium_weight": "中等重量",
+                "slightly_heavy": "偏厚重（更稳定）"
+            },
+            "ja": {
+                "normal_foot": "普通の足型",
+                "high_arch": "高い足のアー?,
+                "flat_foot": "扁平?,
+                "wide_foot": "広い?,
+                "no_preference": "特になし",
+                "not_sure": "分からな?,
+                "other": "その?,
+                "michael_jordan": "マイケル・ジョーダ?,
+                "lebron_james": "レブロン・ジェームス",
+                "kobe_bryant": "コービー・ブライアン?,
+                "stephen_curry": "スティーブン・カリー",
+                "kevin_durant": "ケビン・デュラン?,
+                "james_harden": "ジェームズ・ハーデン",
+                "damian_lillard": "ダミアン・リラード",
+                "yao_ming": "??,
+                "jeremy_lin": "ジェレミー・リン",
+                "point_guard": "ポイントガー?,
+                "shooting_guard": "シューティングガード",
+                "small_forward": "スモールフォワー?,
+                "power_forward": "パワーフォワード",
+                "center": "センター",
+                "fast_breaks": "速いブレークとダンク",
+                "accurate_shooting": "正確なシュー?,
+                "excellent_passing": "優れたパスと組織",
+                "tough_defense": "タフなディフェン?,
+                "well_rounded": "バランスの取れたパフォーマン?,
+                "primary_scorer": "主なスコアラーになる",
+                "occasional_scorer": "時々得点し、主に協力す?,
+                "learn_basics": "まだ確かでなく、基本を学ぶ",
+                "defense_expert": "非常に重要で、ディフェンスの達人になりた?,
+                "average_defense": "普通、最善を尽くすが重点ではない",
+                "offense_focused": "あまり興味がなく、オフェンスに重点を置く",
+                "team_oriented": "チームワーク、ボールの共?,
+                "individual_oriented": "個人のパフォーマンス、責任を負う",
+                "1_2_times": "?-2?,
+                "3_4_times": "?-4?,
+                "depends": "状況次第",
+                "exercise_entertainment": "体を鍛え、娯?,
+                "join_team": "学校チームやクラブに加入する",
+                "improve_skills": "技術を向上させ、ゲームを楽しむ",
+                "professional_player": "プロ選手にな?,
+                "perimeter_shooting": "ペリメーターシュート?ポイント、中距離?,
+                "drives_dunks": "ドライブとラムダンク",
+                "post_play": "ポストプレイ",
+                "passing_playmaking": "パスとプレーメーキン?,
+                "off_ball": "ボールを持たないランとカット",
+                "on_ball_defense": "ボールを持つ相手のディフェンスとスティー?,
+                "blocking_rebounding": "ブロックとリバウンド",
+                "team_defense": "チームディフェンスとヘルプディフェン?,
+                "defensive_awareness": "ディフェンスの意識と予測",
+                "full_court_pressure": "フルコートプレッシャ?,
+                "fast_paced": "速いペースのオフェン?,
+                "half_court": "ハーフコートのポストプレ?,
+                "physical_play": "身体的なプレ?,
+                "skillful_play": "スキルフルなプレ?,
+                "team_play_style": "チームワーク?,
+                "primary_scorer_role": "主なスコアラ?,
+                "playmaker": "プレーメーカ?ボールハンドラー",
+                "defensive_anchor": "ディフェンスの中?,
+                "role_player": "ロールプレイヤー/ブルーカラー",
+                "all_around": "オールラウンドプレイヤー",
+                "1_2_times_week": "1-2?,
+                "3_4_times_week": "3-4?,
+                "5_6_times_week": "5-6?,
+                "almost_daily": "ほぼ毎日",
+                "shooting_accuracy": "シュートの正確さ",
+                "dribbling_driving": "ドリブルとドライ?,
+                "defensive_ability": "ディフェンス能力",
+                "speed_explosiveness": "スピードと爆発力",
+                "basketball_iq": "バスケットボールのIQと意思決?,
+                "indoor_court": "屋内の木製フロア",
+                "outdoor_court": "屋外のコンクリートコート",
+                "both_courts": "どちらも",
+                "cushioning": "クッション?,
+                "support_stability": "サポートと安定?,
+                "lightweight_flexibility": "軽量と柔軟?,
+                "durability": "耐久?,
+                "traction": "トラクション",
+                "breathability": "通気?,
+                "nike": "ナイ?Nike",
+                "adidas": "アディダ?Adidas",
+                "jordan": "エアジョーダ?Air Jordan",
+                "under_armour": "アンダーアーマ?Under Armour",
+                "peak": "ピー?,
+                "li_ning": "リニ?,
+                "very_lightweight": "非常に軽?,
+                "medium_weight": "中程度の重量",
+                "slightly_heavy": "やや重い（より安定）"
+            },
+            "en": {
+                "normal_foot": "Normal foot",
+                "high_arch": "High arch",
+                "flat_foot": "Flat foot",
+                "wide_foot": "Wide foot",
+                "no_preference": "No preference",
+                "not_sure": "Not sure",
+                "other": "Other",
+                "michael_jordan": "Michael Jordan",
+                "lebron_james": "LeBron James",
+                "kobe_bryant": "Kobe Bryant",
+                "stephen_curry": "Stephen Curry",
+                "kevin_durant": "Kevin Durant",
+                "james_harden": "James Harden",
+                "damian_lillard": "Damian Lillard",
+                "yao_ming": "Yao Ming",
+                "jeremy_lin": "Jeremy Lin",
+                "point_guard": "Point Guard",
+                "shooting_guard": "Shooting Guard",
+                "small_forward": "Small Forward",
+                "power_forward": "Power Forward",
+                "center": "Center",
+                "fast_breaks": "Fast breaks and dunks",
+                "accurate_shooting": "Accurate shooting",
+                "excellent_passing": "Excellent passing and playmaking",
+                "tough_defense": "Tough defense",
+                "well_rounded": "Well-rounded performance",
+                "primary_scorer": "Become a primary scorer",
+                "occasional_scorer": "Score occasionally, focus on teamwork",
+                "learn_basics": "Not sure yet, learning basics first",
+                "defense_expert": "Very important, want to be a defensive expert",
+                "average_defense": "Average, will try but not the focus",
+                "offense_focused": "Not very interested, focus more on offense",
+                "team_oriented": "Teamwork, share the ball",
+                "individual_oriented": "Individual performance, take responsibility",
+                "1_2_times": "1-2 times per week",
+                "3_4_times": "3-4 times per week",
+                "depends": "Depends on situation",
+                "exercise_entertainment": "Exercise, entertainment",
+                "join_team": "Join school team or club",
+                "improve_skills": "Improve skills, enjoy the game",
+                "professional_player": "Become a professional player",
+                "perimeter_shooting": "Perimeter shooting (3-pointers, mid-range)",
+                "drives_dunks": "Drives and layups/dunks",
+                "post_play": "Post play",
+                "passing_playmaking": "Passing and playmaking",
+                "off_ball": "Off-ball movement and cutting",
+                "on_ball_defense": "On-ball defense and steals",
+                "blocking_rebounding": "Blocking and rebounding",
+                "team_defense": "Team defense and help defense",
+                "defensive_awareness": "Defensive awareness and anticipation",
+                "full_court_pressure": "Full-court pressure",
+                "fast_paced": "Fast-paced offense",
+                "half_court": "Half-court set plays",
+                "physical_play": "Physical play",
+                "skillful_play": "Skillful play",
+                "team_play_style": "Team-oriented play",
+                "primary_scorer_role": "Primary scorer",
+                "playmaker": "Playmaker/ball handler",
+                "defensive_anchor": "Defensive anchor",
+                "role_player": "Role player/blue collar",
+                "all_around": "All-around player",
+                "1_2_times_week": "1-2 times",
+                "3_4_times_week": "3-4 times",
+                "5_6_times_week": "5-6 times",
+                "almost_daily": "Almost daily",
+                "shooting_accuracy": "Shooting accuracy",
+                "dribbling_driving": "Dribbling and driving",
+                "defensive_ability": "Defensive ability",
+                "speed_explosiveness": "Speed and explosiveness",
+                "basketball_iq": "Basketball IQ and decision making",
+                "indoor_court": "Indoor wooden court",
+                "outdoor_court": "Outdoor concrete court",
+                "both_courts": "Both",
+                "cushioning": "Cushioning",
+                "support_stability": "Support and stability",
+                "lightweight_flexibility": "Lightweight and flexibility",
+                "durability": "Durability",
+                "traction": "Traction",
+                "breathability": "Breathability",
+                "nike": "Nike",
+                "adidas": "Adidas",
+                "jordan": "Air Jordan",
+                "under_armour": "Under Armour",
+                "peak": "Peak",
+                "li_ning": "Li Ning",
+                "very_lightweight": "Very lightweight",
+                "medium_weight": "Medium weight",
+                "slightly_heavy": "Slightly heavy (more stable)"
+            }
+        };
+
+        // 默认球鞋数据 - 模拟数据，实际应从CSV文件加载
+        const defaultShoes = [
+            {
+                "name": "Nike LeBron 20",
+                "brand": "耐克/Nike",
+                "price": 1899,
+                "style_type": "全能均衡?,
+                "position": "小前?大前?,
+                "foot_type": "正常脚型",
+                "court_type": "室内木地?,
+                "features": ["缓震性能", "支撑稳定?, "抓地?],
+                "weight": "中等重量",
+                "description": "Nike LeBron 20 是勒布朗·詹姆斯的?0代签名战靴，采用创新的Zoom Air科技和React泡沫中底，提供出色的缓震和支撑。适合各种位置的球员，尤其是小前锋和大前锋?,
+                "match_score": 95,
+                "image": "https://picsum.photos/id/96/300/200"
+            },
+            {
+                "name": "Nike Air Zoom BB NXT",
+                "brand": "耐克/Nike",
+                "price": 1299,
+                "style_type": "精准投篮?,
+                "position": "控球后卫/得分后卫",
+                "foot_type": "正常脚型",
+                "court_type": "室内木地?,
+                "features": ["轻便灵活?, "抓地?, "缓震性能"],
+                "weight": "非常轻便",
+                "description": "Nike Air Zoom BB NXT 专为外线球员设计，采用全掌Zoom Air Strobel和React泡沫组合，提供出色的能量反馈和稳定性。适合喜欢精准投篮的控球后卫和得分后卫?,
+                "match_score": 92,
+                "image": "https://picsum.photos/id/116/300/200"
+            },
+            {
+                "name": "Adidas Dame 7",
+                "brand": "阿迪达斯/Adidas",
+                "price": 999,
+                "style_type": "突破?,
+                "position": "控球后卫/得分后卫",
+                "foot_type": "正常脚型",
+                "court_type": "室内木地?,
+                "features": ["轻便灵活?, "抓地?, "支撑稳定?],
+                "weight": "非常轻便",
+                "description": "Adidas Dame 7 是达米安·利拉德的?代签名鞋，采用Lightstrike中底科技和橡胶外底，提供出色的反应速度和抓地力。适合喜欢快速突破的控球后卫和得分后卫?,
+                "match_score": 90,
+                "image": "https://picsum.photos/id/106/300/200"
+            },
+            {
+                "name": "Nike KD 14",
+                "brand": "耐克/Nike",
+                "price": 1299,
+                "style_type": "全能均衡?,
+                "position": "小前?大前?,
+                "foot_type": "正常脚型",
+                "court_type": "室内木地?,
+                "features": ["缓震性能", "轻便灵活?, "支撑稳定?],
+                "weight": "中等重量",
+                "description": "Nike KD 14 是凯文·杜兰特的第14代签名战靴，采用全掌Zoom Air Strobel和React泡沫组合，提供出色的缓震和反应能力。适合小前锋和大前锋位置?,
+                "match_score": 88,
+                "image": "https://picsum.photos/id/133/300/200"
+            },
+            {
+                "name": "李宁 闪击8",
+                "brand": "李宁",
+                "price": 799,
+                "style_type": "突破?,
+                "position": "控球后卫/得分后卫",
+                "foot_type": "正常脚型",
+                "court_type": "室内木地?,
+                "features": ["轻便灵活?, "支撑稳定?, "抓地?],
+                "weight": "非常轻便",
+                "description": "李宁闪击8是一款专业篮球鞋，采用李宁云科技和Probar Loc稳定片，提供出色的缓震和支撑。适合喜欢快速突破的控球后卫和得分后卫?,
+                "match_score": 86,
+                "image": "https://picsum.photos/id/152/300/200"
+            },
+            {
+                "name": "匹克 态极大三?,
+                "brand": "匹克",
+                "price": 699,
+                "style_type": "全能均衡?,
+                "position": "小前?大前?中锋",
+                "foot_type": "正常脚型/宽脚",
+                "court_type": "室内木地?,
+                "features": ["缓震性能", "支撑稳定?, "耐磨耐用?],
+                "weight": "中等重量",
+                "description": "匹克态极大三角是一款专业篮球鞋，采用态极科技和碳板稳定系统，提供出色的缓震和支撑。适合小前锋、大前锋和中锋位置?,
+                "match_score": 84,
+                "image": "https://picsum.photos/id/175/300/200"
+            },
+            {
+                "name": "Adidas Harden Vol. 6",
+                "brand": "阿迪达斯/Adidas",
+                "price": 1199,
+                "style_type": "突破?,
+                "position": "得分后卫/控球后卫",
+                "foot_type": "正常脚型",
+                "court_type": "室内木地?,
+                "features": ["轻便灵活?, "支撑稳定?, "抓地?],
+                "weight": "非常轻便",
+                "description": "Adidas Harden Vol. 6 是詹姆斯·哈登的第6代签名战靴，采用Lightstrike中底科技和橡胶外底，提供出色的反应速度和抓地力。适合喜欢突破的得分后卫和控球后卫?,
+                "match_score": 82,
+                "image": "https://picsum.photos/id/190/300/200"
+            },
+            {
+                "name": "Under Armour Curry 8",
+                "brand": "安德?Under Armour",
+                "price": 1299,
+                "style_type": "精准投篮?,
+                "position": "控球后卫/得分后卫",
+                "foot_type": "正常脚型",
+                "court_type": "室内木地?,
+                "features": ["轻便灵活?, "缓震性能", "抓地?],
+                "weight": "非常轻便",
+                "description": "Under Armour Curry 8 是斯蒂芬·库里的第8代签名战靴，采用UA HOVR科技和橡胶外底，提供出色的缓震和抓地力。适合喜欢精准投篮的控球后卫和得分后卫?,
+                "match_score": 80,
+                "image": "https://picsum.photos/id/204/300/200"
+            }
+        ];
+
+        // DOM元素
+        const step1 = document.getElementById('step-1');
+        const step2 = document.getElementById('step-2');
+        const step3 = document.getElementById('step-3');
+        const step4 = document.getElementById('step-4');
+        const stepIndicator1 = document.getElementById('step-indicator-1');
+        const stepIndicator2 = document.getElementById('step-indicator-2');
+        const stepIndicator3 = document.getElementById('step-indicator-3');
+        const stepIndicator4 = document.getElementById('step-indicator-4');
+        const progressLine12 = document.getElementById('progress-line-1-2');
+        const progressLine23 = document.getElementById('progress-line-2-3');
+        const progressLine34 = document.getElementById('progress-line-3-4');
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const shoeModal = document.getElementById('shoe-modal');
+        const modalContent = document.getElementById('modal-content');
+        const closeModal = document.getElementById('close-modal');
+        const recommendationsContainer = document.getElementById('recommendations-container');
+        const noPerfectMatch = document.getElementById('no-perfect-match');
+        const beginnerYes = document.getElementById('beginner-yes');
+        const beginnerNo = document.getElementById('beginner-no');
+        const beginnerQuestions = document.getElementById('beginner-questions');
+        const nonBeginnerQuestions = document.getElementById('non-beginner-questions');
+        const favoritePlayer = document.getElementById('favorite_player');
+        const otherPlayerContainer = document.getElementById('other_player_container');
+        const langButtons = {
+            'zh': [document.getElementById('lang-zh'), document.getElementById('mobile-lang-zh')],
+            'ja': [document.getElementById('lang-ja'), document.getElementById('mobile-lang-ja')],
+            'en': [document.getElementById('lang-en'), document.getElementById('mobile-lang-en')]
+        };
+
+        // 事件监听?
+        document.getElementById('next-step-1').addEventListener('click', () => {
+            if (validateBasicInfo()) {
+                saveBasicInfo();
+                showStep(2);
+            }
+        });
+
+        document.getElementById('prev-step-2').addEventListener('click', () => {
+            showStep(1);
+        });
+
+        document.getElementById('next-step-2').addEventListener('click', () => {
+            saveExperienceInfo();
+            showStep(3);
+        });
+
+        document.getElementById('prev-step-3').addEventListener('click', () => {
+            showStep(2);
+        });
+
+        document.getElementById('next-step-3').addEventListener('click', () => {
+            saveShoePreferences();
+            generateRecommendations();
+            showStep(4);
+        });
+
+        document.getElementById('prev-step-4').addEventListener('click', () => {
+            showStep(3);
+        });
+
+        document.getElementById('restart').addEventListener('click', restart);
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        closeModal.addEventListener('click', () => {
+            shoeModal.classList.add('hidden');
+        });
+
+        shoeModal.addEventListener('click', (e) => {
+            if (e.target === shoeModal) {
+                shoeModal.classList.add('hidden');
+            }
+        });
+
+        beginnerYes.addEventListener('change', () => {
+            if (beginnerYes.checked) {
+                beginnerQuestions.classList.remove('hidden');
+                nonBeginnerQuestions.classList.add('hidden');
+            }
+        });
+
+        beginnerNo.addEventListener('change', () => {
+            if (beginnerNo.checked) {
+                beginnerQuestions.classList.add('hidden');
+                nonBeginnerQuestions.classList.remove('hidden');
+            }
+        });
+
+        favoritePlayer.addEventListener('change', () => {
+            if (favoritePlayer.value === '其他') {
+                otherPlayerContainer.classList.remove('hidden');
+            } else {
+                otherPlayerContainer.classList.add('hidden');
+            }
+        });
+
+        // 添加语言切换事件监听
+        for (const lang in langButtons) {
+            langButtons[lang].forEach(button => {
+                button.addEventListener('click', () => {
+                    changeLanguage(lang);
+                });
+            });
+        }
+
+        // 基本信息验证
+        function validateBasicInfo() {
+            const height = document.getElementById('height').value;
+            const weight = document.getElementById('weight').value;
+            const armSpan = document.getElementById('arm_span').value;
+            const footType = document.getElementById('foot_type').value;
+            const favoritePlayer = document.getElementById('favorite_player').value;
+            const otherPlayer = document.getElementById('other_player')?.value;
+
+            if (!height || !weight || !armSpan || !footType || !favoritePlayer) {
+                alert(translations[currentLang]['required_fields'] || '请填写所有必填字?);
+                return false;
+            }
+
+            if (favoritePlayer === '其他' && !otherPlayer) {
+                alert(translations[currentLang]['other_player_required'] || '请输入其他球员名?);
+                return false;
+            }
+
+            return true;
+        }
+
+        // 保存基本信息
+        function saveBasicInfo() {
+            userAnswers = {
+                height: parseInt(document.getElementById('height').value),
+                weight: parseInt(document.getElementById('weight').value),
+                armSpan: parseInt(document.getElementById('arm_span').value),
+                footType: document.getElementById('foot_type').value,
+                favoritePlayer: document.getElementById('favorite_player').value,
+                otherPlayer: document.getElementById('other_player')?.value || ''
+            };
+        }
+
+        // 保存经验信息
+        function saveExperienceInfo() {
+            userAnswers.isBeginner = document.getElementById('beginner-yes').checked;
+            
+            if (userAnswers.isBeginner) {
+                userAnswers.desiredPosition = document.getElementById('desired_position').value;
+                userAnswers.admireStyle = document.getElementById('admire_style').value;
+                userAnswers.scoringDesire = document.getElementById('scoring_desire').value;
+                userAnswers.defenseInterest = document.getElementById('defense_interest').value;
+                userAnswers.teamPlay = document.getElementById('team_play').value;
+                userAnswers.playingFrequency = document.getElementById('playing_frequency').value;
+                userAnswers.basketballGoal = document.getElementById('basketball_goal').value;
+            } else {
+                userAnswers.playingPosition = document.getElementById('playing_position').value;
+                userAnswers.offensiveStrength = document.getElementById('offensive_strength').value;
+                userAnswers.defensiveStrength = document.getElementById('defensive_strength').value;
+                userAnswers.playStyle = document.getElementById('play_style').value;
+                userAnswers.courtRole = document.getElementById('court_role').value;
+                userAnswers.frequency = document.getElementById('frequency').value;
+                userAnswers.improvementArea = document.getElementById('improvement_area').value;
+            }
+        }
+
+        // 保存球鞋偏好
+        function saveShoePreferences() {
+            userAnswers.courtType = document.getElementById('court_type').value;
+            userAnswers.priceRange = document.getElementById('price_range').value;
+            
+            const shoeFeatures = [];
+            document.querySelectorAll('input[name="shoe_features"]:checked').forEach(checkbox => {
+                shoeFeatures.push(checkbox.value);
+            });
+            userAnswers.shoeFeatures = shoeFeatures;
+            
+            userAnswers.shoeBrand = document.getElementById('shoe_brand').value;
+            userAnswers.shoeWeight = document.getElementById('shoe_weight').value;
+        }
+
+        // 显示指定步骤
+        function showStep(stepNumber) {
+            // 隐藏所有步?
+            step1.classList.add('hidden');
+            step2.classList.add('hidden');
+            step3.classList.add('hidden');
+            step4.classList.add('hidden');
+            
+            // 重置进度指示?
+            stepIndicator1.className = 'progress-step w-10 h-10 rounded-full flex items-center justify-center bg-gray-200 text-gray-500 font-bold shadow-sm';
+            stepIndicator2.className = 'progress-step w-10 h-10 rounded-full flex items-center justify-center bg-gray-200 text-gray-500 font-bold shadow-sm';
+            stepIndicator3.className = 'progress-step w-10 h-10 rounded-full flex items-center justify-center bg-gray-200 text-gray-500 font-bold shadow-sm';
+            stepIndicator4.className = 'progress-step w-10 h-10 rounded-full flex items-center justify-center bg-gray-200 text-gray-500 font-bold shadow-sm';
+            
+            progressLine12.className = 'progress-line h-1 bg-gray-200 rounded';
+            progressLine23.className = 'progress-line h-1 bg-gray-200 rounded';
+            progressLine34.className = 'progress-line h-1 bg-gray-200 rounded';
+            
+            // 显示当前步骤和更新进度指示器
+            if (stepNumber >= 1) {
+                stepIndicator1.className = 'progress-step w-10 h-10 rounded-full flex items-center justify-center bg-primary text-white font-bold shadow-md';
+            }
+            
+            if (stepNumber >= 2) {
+                stepIndicator2.className = 'progress-step w-10 h-10 rounded-full flex items-center justify-center bg-primary text-white font-bold shadow-md';
+                progressLine12.className = 'progress-line h-1 bg-primary rounded';
+            }
+            
+            if (stepNumber >= 3) {
+                stepIndicator3.className = 'progress-step w-10 h-10 rounded-full flex items-center justify-center bg-primary text-white font-bold shadow-md';
+                progressLine23.className = 'progress-line h-1 bg-primary rounded';
+            }
+            
+            if (stepNumber >= 4) {
+                stepIndicator4.className = 'progress-step w-10 h-10 rounded-full flex items-center justify-center bg-primary text-white font-bold shadow-md';
+                progressLine34.className = 'progress-line h-1 bg-primary rounded';
+            }
+            
+            // 显示当前步骤
+            if (stepNumber === 1) step1.classList.remove('hidden');
+            if (stepNumber === 2) step2.classList.remove('hidden');
+            if (stepNumber === 3) step3.classList.remove('hidden');
+            if (stepNumber === 4) step4.classList.remove('hidden');
+        }
+
+        // 生成推荐结果
+        function generateRecommendations() {
+            // 分析用户风格
+            const userStyle = analyzeUserStyle();
+            document.getElementById('primary-style-result').textContent = userStyle.primaryStyle;
+            
+            // 创建风格分析图表
+            createStyleChart(userStyle.styleScores);
+            
+            // 查找匹配的球?
+            const matchingShoes = findMatchingShoes(userStyle, userAnswers);
+            
+            // 显示推荐结果
+            displayRecommendations(matchingShoes);
+        }
+
+        // 分析用户风格
+        function analyzeUserStyle() {
+            // 这里是模拟的风格分析逻辑，实际应用中可以更复?
+            let styleScores = {
+                '全能均衡?: 0,
+                '精准投篮?: 0,
+                '突破?: 0,
+                '防守?: 0
+            };
+            
+            // 基于用户答案计算风格分数
+            // 这些权重是示例性的，可以根据实际情况调?
+            if (userAnswers.isBeginner) {
+                // 新手风格分析
+                if (userAnswers.admireStyle === '全面均衡的表?) styleScores['全能均衡?] += 30;
+                if (userAnswers.admireStyle === '精准投篮') styleScores['精准投篮?] += 30;
+                if (userAnswers.admireStyle === '快速突破和扣篮') styleScores['突破?] += 30;
+                if (userAnswers.admireStyle === '强硬的防?) styleScores['防守?] += 30;
+                
+                if (userAnswers.scoringDesire === '成为主要得分?) {
+                    styleScores['精准投篮?] += 15;
+                    styleScores['突破?] += 15;
+                }
+                
+                if (userAnswers.defenseInterest === '非常重要，想成为防守高手') {
+                    styleScores['防守?] += 20;
+                }
+            } else {
+                // 非新手风格分?
+                if (userAnswers.offensiveStrength === '外线投篮（三分、中投）') styleScores['精准投篮?] += 30;
+                if (userAnswers.offensiveStrength === '突破上篮/扣篮') styleScores['突破?] += 30;
+                if (userAnswers.defensiveStrength === '贴身防守和抢? || userAnswers.defensiveStrength === '盖帽和篮?) styleScores['防守?] += 30;
+                
+                if (userAnswers.courtRole === '全能型球?) styleScores['全能均衡?] += 25;
+                if (userAnswers.courtRole === '主要得分?) {
+                    styleScores['精准投篮?] += 15;
+                    styleScores['突破?] += 15;
+                }
+                if (userAnswers.courtRole === '防守核心') styleScores['防守?] += 20;
+            }
+            
+            // 基于位置调整分数
+            const position = userAnswers.isBeginner ? userAnswers.desiredPosition : userAnswers.playingPosition;
+            if (position === '控球后卫' || position === '得分后卫') {
+                styleScores['精准投篮?] += 15;
+                styleScores['突破?] += 15;
+            } else if (position === '小前? || position === '大前?) {
+                styleScores['全能均衡?] += 20;
+            } else if (position === '中锋') {
+                styleScores['防守?] += 15;
+            }
+            
+            // 找出最高分数的风格
+            let primaryStyle = '全能均衡?;
+            let maxScore = styleScores['全能均衡?];
+            
+            for (const style in styleScores) {
+                if (styleScores[style] > maxScore) {
+                    maxScore = styleScores[style];
+                    primaryStyle = style;
+                }
+            }
+            
+            // 归一化分数为百分?
+            const totalScore = Object.values(styleScores).reduce((sum, score) => sum + score, 0);
+            for (const style in styleScores) {
+                styleScores[style] = totalScore > 0 ? Math.round((styleScores[style] / totalScore) * 100) : 25;
+            }
+            
+            return {
+                primaryStyle: primaryStyle,
+                styleScores: styleScores
+            };
+        }
+
+        // 创建风格分析图表
+        function createStyleChart(styleScores) {
+            const ctx = document.getElementById('style-chart').getContext('2d');
+            
+            // 销毁旧图表
+            if (styleChart) {
+                styleChart.destroy();
+            }
+            
+            // 创建新图?
+            styleChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: Object.keys(styleScores),
+                    datasets: [{
+                        label: translations[currentLang]['style_score'] || '风格匹配?,
+                        data: Object.values(styleScores),
+                        backgroundColor: 'rgba(255, 77, 79, 0.2)',
+                        borderColor: 'rgba(255, 77, 79, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(255, 77, 79, 1)',
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: {
+                                display: true
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 100,
+                            ticks: {
+                                stepSize: 20,
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // 查找匹配的球?
+        function findMatchingShoes(userStyle, userAnswers) {
+            const matchingShoes = [];
+            let perfectMatchFound = false;
+            
+            // 为每款鞋计算匹配分数
+            defaultShoes.forEach(shoe => {
+                let matchScore = shoe.match_score || 75; // 默认匹配分数
+                const mismatches = [];
+                
+                // 基于风格类型调整分数
+                if (shoe.style_type === userStyle.primaryStyle) {
+                    matchScore += 10;
+                } else {
+                    mismatches.push(`风格类型 (${shoe.style_type} vs ${userStyle.primaryStyle})`);
+                }
+                
+                // 基于位置调整分数
+                const shoePositions = shoe.position.split('/');
+                const userPosition = userAnswers.isBeginner ? userAnswers.desiredPosition : userAnswers.playingPosition;
+                if (userPosition && shoePositions.includes(userPosition)) {
+                    matchScore += 5;
+                } else if (userPosition && !userPosition.includes('不清?) && !userPosition.includes('不知?)) {
+                    mismatches.push(`适用位置 (${shoe.position})`);
+                }
+                
+                // 基于脚型调整分数
+                const shoeFootTypes = shoe.foot_type.split('/');
+                if (userAnswers.footType && shoeFootTypes.includes(userAnswers.footType)) {
+                    matchScore += 5;
+                } else if (userAnswers.footType && userAnswers.footType !== '无所?) {
+                    mismatches.push(`脚型适应?(${shoe.foot_type})`);
+                }
+                
+                // 基于场地类型调整分数
+                if (userAnswers.courtType && shoe.court_type.includes(userAnswers.courtType)) {
+                    matchScore += 5;
+                } else if (userAnswers.courtType && userAnswers.courtType !== '两者皆? && !userAnswers.courtType.includes('不清?)) {
+                    mismatches.push(`适用场地 (${shoe.court_type})`);
+                }
+                
+                // 基于品牌偏好调整分数
+                if (userAnswers.shoeBrand && shoe.brand.includes(userAnswers.shoeBrand)) {
+                    matchScore += 5;
+                } else if (userAnswers.shoeBrand && userAnswers.shoeBrand !== '无所?) {
+                    mismatches.push(`品牌 (${shoe.brand})`);
+                }
+                
+                // 基于重量偏好调整分数
+                if (userAnswers.shoeWeight && shoe.weight.includes(userAnswers.shoeWeight)) {
+                    matchScore += 5;
+                } else if (userAnswers.shoeWeight && userAnswers.shoeWeight !== '无所?) {
+                    mismatches.push(`重量 (${shoe.weight})`);
+                }
+                
+                // 基于价格范围调整分数
+                if (userAnswers.priceRange && userAnswers.priceRange !== '0') {
+                    const [minPrice, maxPrice] = userAnswers.priceRange.split(',').map(Number);
+                    if (minPrice && maxPrice && (shoe.price < minPrice || shoe.price > maxPrice)) {
+                        matchScore -= 10;
+                        mismatches.push(`价格 (¥${shoe.price})`);
+                    }
+                }
+                
+                // 基于球鞋特性调整分?
+                if (userAnswers.shoeFeatures && userAnswers.shoeFeatures.length > 0) {
+                    let featureMatch = false;
+                    for (const feature of userAnswers.shoeFeatures) {
+                        if (shoe.features.includes(feature)) {
+                            featureMatch = true;
+                            matchScore += 3;
+                        }
+                    }
+                    if (!featureMatch) {
+                        mismatches.push('球鞋特?);
+                    }
+                }
+                
+                // 确保分数在合理范围内
+                matchScore = Math.max(0, Math.min(100, matchScore));
+                
+                // 检查是否是完美匹配
+                if (mismatches.length === 0) {
+                    perfectMatchFound = true;
+                }
+                
+                // 添加到匹配列?
+                matchingShoes.push({
+                    ...shoe,
+                    matchScore: Math.round(matchScore),
+                    mismatches: mismatches
+                });
+            });
+            
+            // 按匹配分数排?
+            matchingShoes.sort((a, b) => b.matchScore - a.matchScore);
+            
+            // 设置是否找到完美匹配的标?
+            if (!perfectMatchFound && matchingShoes.length > 0) {
+                noPerfectMatch.classList.remove('hidden');
+            } else {
+                noPerfectMatch.classList.add('hidden');
+            }
+            
+            return matchingShoes.slice(0, 5); // 返回?个匹配结?
+        }
+
+        // 显示推荐结果
+        function displayRecommendations(shoes) {
+            recommendationsContainer.innerHTML = '';
+            
+            shoes.forEach((shoe, index) => {
+                const shoeCard = document.createElement('div');
+                shoeCard.className = 'bg-white rounded-xl shadow-md overflow-hidden card-hover';
+                shoeCard.innerHTML = `
+                    <div class="h-40 bg-gray-200 flex items-center justify-center overflow-hidden">
+                        ${shoe.image ? `<img src="${shoe.image}" alt="${shoe.name}" class="max-h-full max-w-full object-contain">` : `<i class="fa fa-shoe-prints text-6xl text-gray-400"></i>`}
+                    </div>
+                    <div class="p-5">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-lg font-bold">${shoe.name}</h4>
+                            <span class="bg-primary/10 text-primary text-xs font-semibold px-2.5 py-0.5 rounded">${shoe.matchScore}%</span>
+                        </div>
+                        <p class="text-sm text-gray-500 mb-3">${shoe.brand}</p>
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-primary font-bold text-xl">¥${shoe.price}</span>
+                            <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">${shoe.style_type}</span>
+                        </div>
+                        <div class="mb-4">
+                            <p class="text-sm text-gray-500 mb-1">适用位置:</p>
+                            <p class="text-sm">${shoe.position}</p>
+                        </div>
+                        <button class="view-details-btn w-full bg-neutral hover:bg-neutral/90 text-white py-2 rounded-lg transition-colors duration-300" data-shoe-index="${index}">
+                            ${translations[currentLang]['shoe_details'] || '查看详情'}
+                        </button>
+                    </div>
+                `;
+                
+                recommendationsContainer.appendChild(shoeCard);
+            });
+            
+            // 添加查看详情按钮事件监听
+            document.querySelectorAll('.view-details-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const shoeIndex = parseInt(e.currentTarget.getAttribute('data-shoe-index'));
+                    showShoeDetails(shoes[shoeIndex]);
+                });
+            });
+        }
+
+        // 显示球鞋详情
+        function showShoeDetails(shoe) {
+            modalContent.innerHTML = `
+                <div class="flex flex-col md:flex-row">
+                    <div class="w-full md:w-1/3 mb-4 md:mb-0 md:pr-4">
+                        <div class="h-48 bg-gray-200 rounded-lg flex items-center justify-center">
+                            <i class="fa fa-shoe-prints text-8xl text-gray-400"></i>
+                        </div>
+                    </div>
+                    <div class="w-full md:w-2/3">
+                        <h4 class="text-xl font-bold mb-1">${shoe.name}</h4>
+                        <p class="text-sm text-gray-500 mb-3">${shoe.brand}</p>
+                        <div class="flex items-center mb-4">
+                            <span class="text-primary font-bold text-2xl mr-4">¥${shoe.price}</span>
+                            <span class="bg-primary/10 text-primary text-sm font-semibold px-2.5 py-0.5 rounded">匹配? ${shoe.matchScore}%</span>
+                        </div>
+                        <div class="mb-4">
+                            <p class="text-sm font-medium mb-1">风格类型:</p>
+                            <p class="text-sm">${shoe.style_type}</p>
+                        </div>
+                        <div class="mb-4">
+                            <p class="text-sm font-medium mb-1">适用位置:</p>
+                            <p class="text-sm">${shoe.position}</p>
+                        </div>
+                        <div class="mb-4">
+                            <p class="text-sm font-medium mb-1">适用脚型:</p>
+                            <p class="text-sm">${shoe.foot_type}</p>
+                        </div>
+                        <div class="mb-4">
+                            <p class="text-sm font-medium mb-1">适用场地:</p>
+                            <p class="text-sm">${shoe.court_type}</p>
+                        </div>
+                        <div class="mb-4">
+                            <p class="text-sm font-medium mb-1">重量:</p>
+                            <p class="text-sm">${shoe.weight}</p>
+                        </div>
+                        <div class="mb-4">
+                            <p class="text-sm font-medium mb-1">主要特?</p>
+                            <div class="flex flex-wrap gap-2">
+                                ${shoe.features.map(feature => `
+                                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">${feature}</span>
+                                `).join('')}
+                            </div>
+                        </div>
+                        ${shoe.mismatches && shoe.mismatches.length > 0 ? `
+                            <div class="mb-4">
+                                <p class="text-sm font-medium mb-1 text-yellow-600">${translations[currentLang]['mismatch_details'] || '不匹配细?'}</p>
+                                <p class="text-sm text-yellow-600">${shoe.mismatches.join(', ')}</p>
+                            </div>
+                        ` : ''}
+                        <div class="mb-4">
+                            <p class="text-sm font-medium mb-1">简?</p>
+                            <p class="text-sm">${shoe.description}</p>
+                        </div>
+                        <a href="#" class="text-blue-600 hover:text-blue-800 text-sm underline flex items-center">
+                            <i class="fa fa-external-link mr-1"></i>
+                            ${translations[currentLang]['purchase_link'] || '购买链接:'}
+                            ${shoe.name}
+                        </a>
+                    </div>
+                </div>
+            `;
+            
+            shoeModal.classList.remove('hidden');
+        }
+
+        // 重新开?
+        function restart() {
+            userAnswers = {};
+            document.getElementById('basic-info-form').reset();
+            document.getElementById('shoe-preferences-form').reset();
+            document.getElementById('beginner-yes').checked = true;
+            beginnerQuestions.classList.remove('hidden');
+            nonBeginnerQuestions.classList.add('hidden');
+            otherPlayerContainer.classList.add('hidden');
+            shoeModal.classList.add('hidden');
+            showStep(1);
+        }
+
+        // 切换语言
+        function changeLanguage(lang) {
+            if (translations[lang]) {
+                currentLang = lang;
+                
+                // 更新UI文本
+                document.querySelectorAll('[data-i18n]').forEach(element => {
+                    const key = element.getAttribute('data-i18n');
+                    if (translations[lang][key]) {
+                        element.textContent = translations[lang][key];
+                    }
+                });
+                
+                // 更新选项文本
+                document.querySelectorAll('[data-i18n-option]').forEach(element => {
+                    const key = element.getAttribute('data-i18n-option');
+                    if (optionTranslations[lang][key]) {
+                        element.textContent = optionTranslations[lang][key];
+                    }
+                });
+                
+                // 更新语言按钮样式
+                for (const l in langButtons) {
+                    langButtons[l].forEach(button => {
+                        if (l === lang) {
+                            button.className = 'px-3 py-1 rounded-md bg-primary/10 text-primary font-medium';
+                        } else {
+                            button.className = 'px-3 py-1 rounded-md hover:bg-gray-100 transition-colors';
+                        }
+                    });
+                }
+                
+                // 如果在结果页面，更新图表
+                if (styleChart) {
+                    styleChart.options.plugins.legend.labels.usePointStyle = true;
+                    styleChart.options.plugins.legend.labels.text = translations[lang]['style_score'] || '风格匹配?;
+                    styleChart.update();
+                }
+                
+                // 关闭移动端菜?
+                mobileMenu.classList.add('hidden');
+            }
+        }
+
+        // 页面加载时初始化
+        
+        // 代码输入模态框
+        function createCodeInputModal() {
+            const modalHTML = `
+            <div id="code-input-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+                <div class="absolute inset-0 bg-black bg-opacity-50" id="modal-backdrop"></div>
+                <div class="relative bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+                    <h2 class="text-xl font-bold text-gray-900 mb-4">请输入访问代码</h2>
+                    <div class="mb-4">
+                        <label for="access-code" class="block text-sm font-medium text-gray-700 mb-1">访问代码</label>
+                        <input type="text" id="access-code" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="请输入4位数代码">
+                        <p id="code-error" class="mt-1 text-sm text-red-600 hidden">代码错误，请重新输入</p>
+                    </div>
+                    <div class="flex justify-end space-x-3">
+                        <button id="close-code-modal" class="px-4 py-2 bg-gray-200 text-gray-800 font-medium rounded-lg hover:bg-gray-300 transition-smooth">
+                            取消
+                        </button>
+                        <button id="submit-code" class="px-4 py-2 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition-smooth">
+                            确认
+                        </button>
+                    </div>
+                </div>
+            </div>
+            `;
+            
+            // 将模态框添加到body
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            
+            // 添加事件监听器
+            document.getElementById('submit-code').addEventListener('click', checkAccessCode);
+            document.getElementById('close-code-modal').addEventListener('click', () => {
+                document.getElementById('code-input-modal').classList.add('hidden');
+            });
+            document.getElementById('modal-backdrop').addEventListener('click', () => {
+                document.getElementById('code-input-modal').classList.add('hidden');
+            });
+            
+            // 添加回车键支持
+            document.getElementById('access-code').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkAccessCode();
+                }
+            });
+        }
+        
+        // 检查访问代码
+        function checkAccessCode() {
+            const accessCode = document.getElementById('access-code').value.trim();
+            const validCodes = ['1234', '5678', '9999', '0000']; // 示例有效代码
+            
+            if (validCodes.includes(accessCode)) {
+                document.getElementById('code-input-modal').classList.add('hidden');
+                document.getElementById('access-code').value = '';
+                showSystemProcess(); // 显示系统流程
+            } else {
+                document.getElementById('code-error').classList.remove('hidden');
+                // 2秒后隐藏错误提示
+                setTimeout(() => {
+                    document.getElementById('code-error').classList.add('hidden');
+                }, 2000);
+            }
+        }
+        
+        // 显示系统流程
+        function showSystemProcess() {
+            const processModalHTML = `
+            <div id="process-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+                <div class="absolute inset-0 bg-black bg-opacity-50" id="process-backdrop"></div>
+                <div class="relative bg-white rounded-xl shadow-xl w-full max-w-2xl p-6">
+                    <h2 class="text-xl font-bold text-gray-900 mb-4">篮球鞋推荐系统流程</h2>
+                    <div class="space-y-4 mb-4">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-medium mt-1">1</div>
+                            <div class="ml-3">
+                                <h3 class="text-lg font-medium text-gray-900">填写基本信息</h3>
+                                <p class="mt-1 text-sm text-gray-600">输入您的打球位置、体重和打球风格</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-medium mt-1">2</div>
+                            <div class="ml-3">
+                                <h3 class="text-lg font-medium text-gray-900">完成测评问卷</h3>
+                                <p class="mt-1 text-sm text-gray-600">回答关于您的鞋款偏好和特殊需求的问题</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-medium mt-1">3</div>
+                            <div class="ml-3">
+                                <h3 class="text-lg font-medium text-gray-900">获取个性化推荐</h3>
+                                <p class="mt-1 text-sm text-gray-600">系统将根据您的信息生成专属篮球鞋推荐列表</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex justify-center">
+                        <button id="close-process-modal" class="px-6 py-2 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition-smooth">
+                            开始使用
+                        </button>
+                    </div>
+                </div>
+            </div>
+            `;
+            
+            // 将流程模态框添加到body
+            document.body.insertAdjacentHTML('beforeend', processModalHTML);
+            
+            // 显示流程模态框
+            document.getElementById('process-modal').classList.remove('hidden');
+            
+            // 添加关闭按钮事件
+            document.getElementById('close-process-modal').addEventListener('click', () => {
+                document.getElementById('process-modal').classList.add('hidden');
+                // 滚动到测评区域
+                document.querySelector('#start').scrollIntoView({ behavior: 'smooth' });
+            });
+            document.getElementById('process-backdrop').addEventListener('click', () => {
+                document.getElementById('process-modal').classList.add('hidden');
+            });
+        }
+        
+        // 添加代码输入按钮到导航栏
+        function addCodeInputButton() {
+            const navElement = document.querySelector('nav div.flex.justify-between');
+            if (navElement) {
+                const rightSection = navElement.lastElementChild;
+                const buttonHTML = `
+                <button id="open-code-input" class="md:inline-flex px-3 py-2 ml-4 rounded-md text-sm font-medium text-white bg-accent hover:bg-accent/90 transition-smooth">
+                    输入代码 <i class="fa fa-key ml-1"></i>
+                </button>
+                `;
+                rightSection.insertAdjacentHTML('beforeend', buttonHTML);
+                
+                // 添加点击事件
+                document.getElementById('open-code-input').addEventListener('click', () => {
+                    document.getElementById('code-input-modal').classList.remove('hidden');
+                });
+            }
+        }
+
+        
+            // 添加平滑滚动
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+            
+            // 初始化步骤显?
+            showStep(1);
+            
+                        // 创建代码输入模态框
+            createCodeInputModal();
+            // 添加代码输入按钮
+            addCodeInputButton();
+
+            
+            beginnerQuestions.classList.remove('hidden');
+            nonBeginnerQuestions.classList.add('hidden');
+        });
+    </script>
+</body>
+</html>
+
